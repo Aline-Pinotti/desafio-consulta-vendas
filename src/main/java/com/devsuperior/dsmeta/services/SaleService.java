@@ -9,15 +9,32 @@ import com.devsuperior.dsmeta.dto.SaleMinDTO;
 import com.devsuperior.dsmeta.entities.Sale;
 import com.devsuperior.dsmeta.repositories.SaleRepository;
 
+import java.time.Instant;
+import java.time.LocalDate;
+import java.time.ZoneId;
+
+//import java.time.ZoneId;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Page;
+//import java.time.Instant;
+
 @Service
 public class SaleService {
 
 	@Autowired
 	private SaleRepository repository;
-	
+
 	public SaleMinDTO findById(Long id) {
 		Optional<Sale> result = repository.findById(id);
 		Sale entity = result.get();
 		return new SaleMinDTO(entity);
+	}
+
+	public Page<SaleMinDTO> findSales(String minDate, String maxDate, String name, Pageable pageable) {
+		LocalDate today = LocalDate.ofInstant(Instant.now(), ZoneId.systemDefault());
+		LocalDate lastYear = today.minusYears(1L);
+
+		return repository.findSales(minDate.equals("") ? lastYear : LocalDate.parse(minDate),
+				maxDate.equals("") ? today : LocalDate.parse(maxDate), name, pageable);
 	}
 }
