@@ -13,6 +13,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.devsuperior.dsmeta.dto.SaleMinDTO;
+import com.devsuperior.dsmeta.dto.SaleSummaryDTO;
 import com.devsuperior.dsmeta.services.SaleService;
 
 @RestController
@@ -28,26 +29,22 @@ public class SaleController {
 		return ResponseEntity.ok(dto);
 	}
 
-	// minDate=2022-05-01&maxDate=2022-05-31&name=odinson // defaultValue =
-	// "#{T(java.time.LocalDateTime).now()}")
-
 	@GetMapping(value = "/report")
-	public ResponseEntity<Page<SaleMinDTO>> getReport(// teste utilizando spring expression language
+	public ResponseEntity<Page<SaleMinDTO>> getReport(
 			@RequestParam(name = "minDate", defaultValue = "") String minDate,
 			@RequestParam(name = "maxDate", defaultValue = "") String maxDate,
 			@RequestParam(name = "name", defaultValue = "") String name,
 			Pageable pageable) {
 
 		return ResponseEntity.ok(service.findSales(minDate, maxDate, name, pageable));
-	}/*
-		 * Dica: receba todos os dados como String no controller, e faça os tratamentos
-		 * das datas acima,
-		 * instanciando os objetos LocalDate, no service.
-		 */
+	}
 
 	@GetMapping(value = "/summary")
-	public ResponseEntity<?> getSummary() {
-		// TODO
-		return null;
+	public ResponseEntity<Page<SaleSummaryDTO>> getSummary(
+			@RequestParam(name = "minDate", defaultValue = "") String minDate,
+			@RequestParam(name = "maxDate", defaultValue = "") String maxDate,
+			Pageable pageable) {
+
+		return ResponseEntity.ok(service.findSalesSummary(minDate, maxDate, pageable));
 	}
 }
